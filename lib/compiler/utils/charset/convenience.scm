@@ -1,0 +1,11 @@
+(define (charset . args)
+  (define (charstring x)
+    (cond ((string? x) (string->list x))
+	  ((char? x)   (list x))
+	  (else        (list))))
+  (let loop ((set '())
+	     (chars (apply append (map charstring args))))
+    (if (null? chars)
+	set
+	(loop (charset-add set (car chars))
+	      (cdr chars)))))
