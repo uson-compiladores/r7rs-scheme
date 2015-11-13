@@ -30,14 +30,17 @@
 (define |<vertical line>|
   (rx (c #\|)))
 
-;; The comments in R7RS include the datum comment form ( #; <datum> ) and the
-;; nested comment form ( #| <comment text> <comment cont>* |#) wich take into
-;; account the matching of open and closing parentheses or the open and closing
-;; #| |# sequences. This can't be computed by a machine that generates regular
-;; languages like the regular expressions or finite automata. So for now, the
-;; comments are going to be made R5RS style.
 (define |<comment>|
-  (rx (.. (c #\;) (* (~ |<line ending>|)))))
+  (rx (.. (c ";") (* (~ |<line ending>|)))))
+
+(define |<#;>|
+  (rx (c "#;")))
+
+(define |<#\|>|
+  (rx (c "#|")))
+
+(define |<\|#>|
+  (rx (c "|#")))
 
 (define |<directive>|
   (rx (: (s "#!fold-case")

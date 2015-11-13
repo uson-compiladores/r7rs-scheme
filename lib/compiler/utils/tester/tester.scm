@@ -5,10 +5,6 @@
 ;;;
 ;;; 
 
-(import (scheme base)
-	(scheme write))
-
-
 (define-record-type <test-data>
   (%test-data-make title total passed failed)
   test-data?
