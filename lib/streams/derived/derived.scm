@@ -1,46 +1,3 @@
-(import (scheme base)
-	(scheme lazy)
-					;(compiler utils tester)
-	)
-
-(define (fast-load)
-  (load "./lib/streams/streams.scm"))
-
-;;; (streams primitive)
-(define stream-null (delay '()))
-
-(define-syntax stream-cons
-  (syntax-rules ()
-    ((stream-cons kar kdr)
-     (delay (cons (delay kar) (delay kdr))))))
-
-(define (stream? x)
-  (and (promise? x) (or (stream-null? x) (stream-pair? x))))
-
-(define (stream-null? x)
-  (null? (force x)))
-
-(define (stream-pair? x)
-  (pair? (force x)))
-
-(define (stream-car x)
-  (cond ((not (stream? x)) (error "non-stream" x))
-	((stream-null? x)  (error "null stream" (force x)))
-	(else              (force (car (force x))))))
-
-(define (stream-cdr x)
-  (cond ((not (stream? x)) (error "non-stream" x))
-	((stream-null? x)  (error "null-stream" (force x)))
-	(else              (force (cdr (force x))))))
-
-(define-syntax stream-lambda
-  (syntax-rules ()
-    ((stream-lambda formals body0 body1 ...)
-     (lambda formals
-       (delay-force
-	(let () body0 body1 ...))))))
-
-;;; (streams derived)
 (define-syntax define-stream
   (syntax-rules ()
     ((define-stream (name . formal) body0 body1 ...)
@@ -162,7 +119,7 @@
 		    base
 		    (loop (proc base (stream-car strm)) (stream-cdr strm)))))))
 
-(define (stream-for-each proc .strms)
+(define (stream-for-each proc . strms)
   (define (stream-for-each strms)
     (if (not (exists stream-null? strms))
 	(begin (apply proc (map stream-car strms))
@@ -199,7 +156,9 @@
 (define-syntax stream-let
   (syntax-rules ()
     ((stream-let tag ((name val) ...) body1 body2 ...)
-     ((letrec ((tag (stream-lambda (name ...) body1 body2 ...))) tag) val ...))))
+     ((letrec ((tag (stream-lambda (name ...) body1 body2 ...)))
+	tag)
+      val ...))))
 
 (define (stream-map proc . strms)
   (define-stream (stream-map strms)
@@ -256,7 +215,7 @@
 	(else (let loop ((strm strm) (n n))
 		(cond ((stream-null? strm) (error "beyond end of stream"))
 		      ((zero? n) (stream-car strm))
-		      (else (loop (stream-cdr strm (- n 1)))))))))
+		      (else (loop (stream-cdr strm) (- n 1))))))))
 
 (define (stream-reverse strm)
   (define-stream (stream-reverse strm rev)
@@ -341,41 +300,3 @@
 	((exists (lambda (x) (not (stream? x))) strms)
 	 (error "non-stream argument"))
 	(else (stream-zip strms))))
-
-
-(tester
- "(stream primitives) implementation SRFI-41 compliance"
- (test-define "stream construction"
-	      strm123
-	      (stream-cons 1 (stream-cons 2 (stream-cons 3 stream-null))))
- (test/equal "stream-car of strm123"
-	     (stream-car strm123) 1)
- (test/equal "stream-car of strm123 stream-cdr"
-	     (stream-car (stream-cdr strm123)) 2)
- (test/equal "lazyness of a stream and pair null distinctimon"
-	     (stream-pair? (stream-cdr (stream-cons (/ 1 0) stream-null))) #f)
- (test/equal "stream recognizer correctness"
-	     (stream? (list 1 2 3)) #f)
- (test-define "stream iterator"
-	      iter
-	      (stream-lambda (f x) (stream-cons x (iter f (f x)))))
- (test-define "all the natural numbers in a stream"
-	      nats
-	      (iter (lambda (x) (+ x 1)) 0))
- (test/equal "validate accessing natural numbers"
-	     (stream-car (stream-cdr nats)) 1)
- (test-define "recursive stream add procedure"
-	      stream-add
-	      (stream-lambda (s1 s2) (stream-cons
-				      (+ (stream-car s1) (stream-car s2))
-				      (stream-add (stream-cdr s1)
-						  (stream-cdr s2)))))
- (test-define "even numbers as a stream"
-	      evens
-	      (stream-add nats nats))
- (test/equal "first even number"
-	     (stream-car evens) 0)
- (test/equal "second even number"
-	     (stream-car (stream-cdr evens)) 2)
- (test/equal "third even number"
-	     (stream-car (stream-cdr (stream-cdr evens))) 4))
