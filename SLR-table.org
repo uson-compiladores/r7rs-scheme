@@ -1,0 +1,359 @@
+* DONE Grammar
+0)   Z  => D
+1)   D  => S
+2)   D  => C
+3)   S  => boolean
+4)   S  => number
+5)   S  => character
+6)   S  => string
+7)   S  => X
+8)   X  => identifier
+9)   C  => L
+10)  C  => V
+11)  L  => lparen D*
+12)  L  => lparen D+
+13)  L  => A
+14)  D* => rparen
+15)  D* => D D*
+16)  D+ => D consdot D rparen
+17)  D+ => D D+
+18)  A  => P D
+19)  P  => quote
+20)  P  => quasiquote
+21)  P  => unquote
+22)  P  => unquote-splicing
+23)  V  => vparen D*
+
+* DONE LR(0) Automaton
+| 0                       | 
+|-------------------------|
+| Z  => .D                |
+|-------------------------|
+| D  => .S                |
+| D  => .C                |
+| S  => .boolean          |
+| S  => .number           |
+| S  => .character        |
+| S  => .string           |
+| S  => .X                |
+| X  => .identifier       |
+| C  => .L                |
+| C  => .V                |
+| L  => .lparen D*        |
+| L  => .lparen D+        |
+| L  => .A                |
+| A  => .P D              |
+| P  => .quote            |
+| P  => .quasiquote       |
+| P  => .unquote          |
+| P  => .unquote-splicing |
+| V  => .vparen D*        |
+
+** DONE 
+| 0 -> D -> 1 |
+|-------------|
+| Z  => D .   |
+
+** DONE
+| 0 -> S -> 2 |
+|-------------|
+| D  => S .   |
+
+** DONE
+| 0 -> C -> 3 |
+|-------------|
+| D  => C .   |
+
+** DONE
+| 0 -> boolean -> 4 |
+|-------------------|
+| S  => boolean .   |
+
+** DONE
+| 0 -> number -> 5 |
+|------------------|
+| S  => number .   |
+
+** DONE
+| 0 -> character -> 6 |
+|---------------------|
+| S  => character .   |
+
+** DONE
+| 0 -> string -> 7 |
+|------------------|
+| S  => string .   |
+
+** DONE
+| 0 -> X -> 8 |
+|-------------|
+| S  => X .   |
+
+** DONE
+| 0 -> identifier -> 9 |
+|----------------------|
+| X  => identifier .   |
+
+** DONE
+| 0 -> L -> 10 |
+|--------------|
+| C  => L .    |
+
+** DONE
+| 0 -> V -> 11 |
+|--------------|
+| C  => V .    |
+
+** DONE 
+| 0 -> lparen -> 12         |
+|---------------------------|
+| L  => lparen .D*          |
+| L  => lparen .D+          |
+|---------------------------|
+| D* => .rparen             |
+| D* => .D D*               |
+| D+ => .D consdot D rparen |
+| D+ => .D D+               |
+| D  => .S                  |
+| D  => .C                  |
+| S  => .boolean            |
+| S  => .number             |
+| S  => .character          |
+| S  => .string             |
+| S  => .X                  |
+| X  => .identifier         |
+| C  => .L                  |
+| C  => .V                  |
+| L  => .lparen D*          |
+| L  => .lparen D+          |
+| L  => .A                  |
+| A  => .P D                |
+| P  => .quote              |
+| P  => .quasiquote         |
+| P  => .unquote            |
+| P  => .unquote-splicing   |
+| V  => .vparen D*          |
+
+*** DONE 
+| 12 -> D* -> 20            |
+|---------------------------|
+| L  => lparen D* .         |
+
+*** DONE
+| 12 -> D+ -> 21            |
+|---------------------------|
+| L  => lparen D+ .         |
+
+*** DONE
+| 12 -> rparen -> 22 |
+|--------------------|
+| D* => rparen .     |
+
+*** DONE 
+| 12 -> D -> 23             |
+|---------------------------|
+| D* => D .D*               |
+| D+ => D .consdot D rparen |
+| D+ => D .D+               |
+|---------------------------|
+| D* => .rparen             |
+| D* => .D D*               |
+| D+ => .D consdot D rparen |
+| D+ => .D D+               |
+| D  => .S                  |
+| D  => .C                  |
+| S  => .boolean            |
+| S  => .number             |
+| S  => .character          |
+| S  => .string             |
+| S  => .X                  |
+| X  => .identifier         |
+| C  => .L                  |
+| C  => .V                  |
+| L  => .lparen D*          |
+| L  => .lparen D+          |
+| L  => .A                  |
+| A  => .P D                |
+| P  => .quote              |
+| P  => .quasiquote         |
+| P  => .unquote            |
+| P  => .unquote-splicing   |
+| V  => .vparen D*          |
+
+**** DONE
+| 23 -> D* -> 26 |
+|----------------|
+| D* => D D* .   |
+
+**** DONE 
+| 12 -> consdot -> 27       |
+|---------------------------|
+| D+ => D consdot .D rparen |
+|---------------------------|
+| D  => .S                  |
+| D  => .C                  |
+| S  => .boolean            |
+| S  => .number             |
+| S  => .character          |
+| S  => .string             |
+| S  => .X                  |
+| X  => .identifier         |
+| C  => .L                  |
+| C  => .V                  |
+| L  => .lparen D*          |
+| L  => .lparen D+          |
+| L  => .A                  |
+| A  => .P D                |
+| P  => .quote              |
+| P  => .quasiquote         |
+| P  => .unquote            |
+| P  => .unquote-splicing   |
+| V  => .vparen D*          |
+
+***** DONE 
+| 27 -> D -> 29             |
+|---------------------------|
+| D+ => D consdot D .rparen |
+
+****** DONE 
+| 29 -> rparen -> 30         |
+|----------------------------|
+| D+ => D consdot D rparen . |
+
+
+**** DONE 
+| 12 -> D+ -> 28            |
+|---------------------------|
+| D+ => D D+ .              |
+
+
+** DONE
+| 0 -> A -> 13 |
+|--------------|
+| L  => A .    |
+
+** DONE 
+| 0 -> P -> 14            |
+|-------------------------|
+| A  => P .D              |
+|-------------------------|
+| D  => .S                |
+| D  => .C                |
+| S  => .boolean          |
+| S  => .number           |
+| S  => .character        |
+| S  => .string           |
+| S  => .X                |
+| X  => .identifier       |
+| C  => .L                |
+| C  => .V                |
+| L  => .lparen D*        |
+| L  => .lparen D+        |
+| L  => .A                |
+| A  => .P D              |
+| P  => .quote            |
+| P  => .quasiquote       |
+| P  => .unquote          |
+| P  => .unquote-splicing |
+| V  => .vparen D*        |
+
+*** DONE
+| 14 -> D -> 24           |
+|-------------------------|
+| A  => P D .             |
+
+** DONE
+| 0 -> quote -> 15 |
+|------------------|
+| P  => quote .    |
+
+** DONE
+| 0 -> quasiquote -> 16 |
+|-----------------------|
+| P  => quasiquote .    |
+
+** DONE
+| 0 -> unquote -> 17      |
+|-------------------------|
+| P  => unquote .         |
+
+** DONE
+| 0 -> unquote-splicing -> 18 |
+|-----------------------------|
+| P  => unquote-splicing .    |
+
+** DONE 
+| 0 -> vparen -> 19       |
+|-------------------------|
+| V  => vparen .D*        |
+|-------------------------|
+| D* => .rparen           |
+| D* => .D D*             |
+| D  => .S                |
+| D  => .C                |
+| S  => .boolean          |
+| S  => .number           |
+| S  => .character        |
+| S  => .string           |
+| S  => .X                |
+| X  => .identifier       |
+| C  => .L                |
+| C  => .V                |
+| L  => .lparen D*        |
+| L  => .lparen D+        |
+| L  => .A                |
+| A  => .P D              |
+| P  => .quote            |
+| P  => .quasiquote       |
+| P  => .unquote          |
+| P  => .unquote-splicing |
+| V  => .vparen D*        |
+
+*** DONE
+| 19 -> D* -> 25          |
+|-------------------------|
+| V  => vparen D* .       |
+
+
+* DONE First
+First(D)  = {boolean, number, character, string, identifier, lparen, quote, quasiquote, unquote, unquote-splicing, vparen}
+First(S)  = {boolean, number, character, string, identifier}
+First(X)  = {identifier}
+First(C)  = {lparen, quote, quasiquote, unquote, unquote-splicing, vparen}
+First(L)  = {lparen, quote, quasiquote, unquote, unquote-splicing}
+First(D*) = {rparen, boolean, number, character, string, identifier, lparen, quote, quasiquote, unquote, unquote-splicing, vparen}
+First(D+) = {boolean, number, character, string, identifier, lparen, quote, quasiquote, unquote, unquote-splicing, vparen}
+First(A)  = {quote, quasiquote, unquote, unquote-splicing}
+First(P)  = {quote, quasiquote, unquote, unquote-splicing}
+First(V)  = {vparen}
+
+* DONE Follow
+Follow(D)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(S)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(X)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(C)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(L)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(D*) = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(D+) = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(A)  = {$, rparen, boolean, number, character, string, identifier,
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}
+Follow(P)  = {boolean, number, character, string, identifier, lparen, quote,
+              quasiquote, unquote, unquote-splicing, vparen}
+Follow(V)  = {$, rparen, boolean, number, character, string, identifier, 
+              lparen, quote, quasiquote, unquote, unquote-splicing, vparen,
+              consdot}

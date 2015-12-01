@@ -18,6 +18,8 @@
 ;;; L[(& r s)]  ; L[r] intersection L[s]
 ;;; L[(~ r)]    ; universe \ L[r]
 
+(define regex-alphabet (charset-int-range 0 127))
+
 (define (regex-charset . args)
   (apply charset args))
 
@@ -85,6 +87,9 @@
   (define (wrap a b)
     (list ': a b))
   (cond ((regex-similar? r s) r)
+	((and (regex-charset? r)
+	      (regex-charset? s))
+	 (charset-union r s))		;MOD
 	((regex-altern? r)
 	 (regex-altern (regex-altern-first r)
 		       (regex-altern (regex-altern-second r) s)))
@@ -135,6 +140,8 @@
   (define (wrap a)
     (list '~ a))
   (cond ((regex-neg? r) r)
+	((regex-charset? r)
+	 (charset-difference regex-alphabet r)) ;MOD
 	(else
 	 (wrap r))))
 
@@ -203,6 +210,21 @@
 ;;;
 ;;; (deriv r epsilon) ==> r
 ;;; (deriv r str) ==> (deriv (deriv r u) a) where str is composed of chars u and a
+
+(define (regex->list r)
+  (cond ((regex-epsilon? r) 'epsil)
+	((regex-charset? r) (cons 'set (charset->list r)))
+	((regex-concat? r) (list '..
+				 (regex->list (regex-concat-first r))
+				 (regex->list (regex-concat-second r))))
+	((regex-kleene? r) (list '* (regex->list (regex-kleene-arg r))))
+	((regex-altern? r) (list ':
+				 (regex->list (regex-altern-first r))
+				 (regex->list (regex-altern-second r))))
+	((regex-and? r) (list '&
+			      (regex->list (regex-and-first r))
+			      (regex->list (regex-and-second r))))
+	((regex-neg? r) (list '~ (regex->list (regex-neg-arg r))))))
 
 (define (deriv r c)
   (cond ((regex-epsilon? c)

@@ -68,6 +68,9 @@
 (define (const x)
   (lambda (y) x))
 
+(define (lexeme x)
+  (lambda (y) (cons x y)))
+
 (define (relate x f)
   (lambda (y) (cons x (f y))))
 

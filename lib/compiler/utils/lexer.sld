@@ -11,6 +11,7 @@
 
    const
    relate
+   lexeme
 
    rule-map
    next-token

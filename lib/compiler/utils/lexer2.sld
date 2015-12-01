@@ -1,0 +1,7 @@
+(define-library (compiler utils lexer2)
+  (import (scheme small)
+	  (compiler utils scanner)
+	  (compiler utils regex)
+	  (streams))
+  (export)
+  (include "./lexer2/lexer2.scm"))

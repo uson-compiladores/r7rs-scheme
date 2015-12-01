@@ -9,7 +9,7 @@
   (and (promise? x) (or (stream-null? x) (stream-pair? x))))
 
 (define (stream-null? x)
-  (null? (force x)))
+  (and (promise? x) (null? (force x))))
 
 (define (stream-pair? x)
   (pair? (force x)))

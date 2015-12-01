@@ -4,6 +4,7 @@
 	  (compiler utils charset))
   (export
    ;; regex types
+   regex-alphabet
    regex-charset regex-charset? regex-null?
    regex-epsilon regex-epsilon?
    regex-concat  regex-concat?  regex-concat-first regex-concat-second
@@ -23,7 +24,10 @@
    deriv*
 
    ;; syntax
-   rx)
+   rx
+
+   ;; debug
+   regex->list)
   (include "./regex/misc.scm")
   (include "./regex/regex.scm"))
 
